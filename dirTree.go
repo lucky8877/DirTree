@@ -21,7 +21,11 @@ func DirTree(pathName string, st int, mod string) error {
 		return err
 	}
 	for _, fi := range files {
-		fl, _ := os.Open(pathName + "/" + fi.Name())
+		fl, err := os.Open(pathName + "/" + fi.Name())
+		defer fl.Close()
+		if err != nil {
+			return err
+		}
 		fk, _ := fl.Stat()
 		if mod == "-f" && fk.IsDir() == false {
 			fmt.Println(strings.Repeat("\t", st) + "├───" + fi.Name() + "(" + strconv.Itoa(int(fk.Size())) + "b)")
